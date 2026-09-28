@@ -2,7 +2,7 @@
 * { box-sizing: border-box; }
 html, body, main { margin: 0; width: 100%; height: 100%; overflow: hidden; }
 main { position: relative; background: radial-gradient(ellipse at 28% 18%, #29616a 0%, #123e49 43%, #061d29 100%); }
-canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; filter: blur(.8px); }
 canvas:focus-visible { outline: 1px solid #c2e6dc; outline-offset: -8px; }
 header, footer { position: absolute; left: max(28px, env(safe-area-inset-left)); right: max(28px, env(safe-area-inset-right)); display: flex; justify-content: space-between; pointer-events: none; font: 10px/1.6 system-ui, sans-serif; letter-spacing: .22em; color: #b6d9d099; }
 header { top: max(26px, env(safe-area-inset-top)); }
