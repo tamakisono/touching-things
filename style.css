@@ -1,0 +1,15 @@
+:root { color-scheme: dark; font-family: Georgia, 'Yu Mincho', serif; background: #082c35; color: #d1e6e4; }
+* { box-sizing: border-box; }
+html, body, main { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+main { position: relative; background: radial-gradient(ellipse at 28% 18%, #29616a 0%, #123e49 43%, #061d29 100%); }
+canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+canvas:focus-visible { outline: 1px solid #c2e6dc; outline-offset: -8px; }
+header, footer { position: absolute; left: max(28px, env(safe-area-inset-left)); right: max(28px, env(safe-area-inset-right)); display: flex; justify-content: space-between; pointer-events: none; font: 10px/1.6 system-ui, sans-serif; letter-spacing: .22em; color: #b6d9d099; }
+header { top: max(26px, env(safe-area-inset-top)); }
+footer { bottom: max(24px, env(safe-area-inset-bottom)); letter-spacing: .15em; }
+.intro { position: absolute; top: 44%; left: 0; width: 100%; text-align: center; pointer-events: none; transition: opacity 1.8s ease; }
+h1 { font-size: clamp(48px, 8vw, 86px); font-weight: 400; letter-spacing: .09em; margin: 0 0 18px; color: #d1e6e4c4; }
+.intro p { font-size: 12px; letter-spacing: .3em; opacity: .65; }
+body.touched .intro { opacity: 0; }
+.notice { position: absolute; top: 65%; width: 100%; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .intro { transition: none; } }
