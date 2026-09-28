@@ -42,12 +42,12 @@
         const alpha = fade * ripple.strength * (1 - ring * .2);
         ctx.beginPath();
         ctx.ellipse(ripple.x, ripple.y + 1.5, r, r * .76, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(0, 12, 24, ${alpha * .45})`;
+        ctx.strokeStyle = `rgba(0, 86, 128, ${alpha * .45})`;
         ctx.lineWidth = 3;
         ctx.stroke();
         ctx.beginPath();
         ctx.ellipse(ripple.x, ripple.y, r, r * .76, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(210, 245, 237, ${alpha * .9})`;
+        ctx.strokeStyle = `rgba(239, 255, 250, ${alpha * .9})`;
         ctx.lineWidth = 1.7;
         ctx.stroke();
       }
