@@ -47,8 +47,8 @@
         ctx.stroke();
         ctx.beginPath();
         ctx.ellipse(ripple.x, ripple.y, r, r * .76, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(180, 231, 223, ${alpha * .65})`;
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = `rgba(210, 245, 237, ${alpha * .9})`;
+        ctx.lineWidth = 1.7;
         ctx.stroke();
       }
     }
