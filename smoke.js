@@ -21,10 +21,10 @@ function resize(){
 function sample(a,x,y){x=Math.max(.5,Math.min(W-1.5,x));y=Math.max(.5,Math.min(H-1.5,y));const X=Math.floor(x),Y=Math.floor(y),fx=x-X,fy=y-Y,i=Y*W+X;return (a[i]*(1-fx)+a[i+1]*fx)*(1-fy)+(a[i+W]*(1-fx)+a[i+W+1]*fx)*fy;}
 function step(dt){
  time+=dt;
- // A narrow continuous source; small changes keep the plume alive.
+ // Feather the source in both directions so no rectangular edge enters the plume.
  const sx=W*.5+Math.sin(time*.8)*W*.025;
- for(let y=H-7;y<H-1;y++)for(let x=1;x<W-1;x++){
-  const a=Math.exp(-Math.pow((x-sx)/(W*.035),2));const i=y*W+x;
+ for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
+  const a=Math.exp(-Math.pow((x-sx)/(W*.035),2)-Math.pow((y-(H-3))/4.5,2));const i=y*W+x;
   d[i]=Math.min(3,d[i]+a*dt*8);v[i]-=a*dt*32;
  }
  for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
@@ -43,7 +43,7 @@ function step(dt){
  for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
   const i=y*W+x;u[i]-=(p[i+1]-p[i-1])*.5;v[i]-=(p[i+W]-p[i-W])*.5;
   nd[i]=sample(d,x-u[i]*dt,y-v[i]*dt)*Math.exp(-dt*.18);
-  if(y<10)nd[i]*=.94;
+  nd[i]*=Math.exp(-dt*2.5*Math.exp(-Math.pow(y/7,2)));
  }
  [d,nd]=[nd,d];
 }
