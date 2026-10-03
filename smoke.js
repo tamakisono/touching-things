@@ -2,11 +2,11 @@
 (() => {
 'use strict';
 const canvas=document.querySelector('#smoke'), ctx=canvas.getContext('2d');
-const pause=document.querySelector('#pause'), reduced=matchMedia('(prefers-reduced-motion: reduce)');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 if(!ctx)return;
 const layer=document.createElement('canvas'), lc=layer.getContext('2d');
 let W,H,N,u,v,d,nu,nv,nd,p,np,div,pixels,width,height,frame=0,last=0,time=0;
-let paused=reduced.matches;
+
 const pointers=new Map();
 function resize(){
  width=canvas.clientWidth;height=canvas.clientHeight;
@@ -52,22 +52,20 @@ function render(){
  for(let i=0;i<N;i++){const light=1-Math.exp(-d[i]*.85);a[i*4]=16+light*165;a[i*4+1]=17+light*172;a[i*4+2]=22+light*187;a[i*4+3]=255;}
  lc.putImageData(pixels,0,0);ctx.imageSmoothingEnabled=true;ctx.drawImage(layer,0,0,width,height);
 }
-function tick(now){frame=0;if(paused||document.hidden)return;const dt=Math.min((now-last)/1000,.033);last=now;step(dt);render();frame=requestAnimationFrame(tick);}
-function start(){if(!frame&&!paused&&!document.hidden){last=performance.now();frame=requestAnimationFrame(tick);}}
+function tick(now){frame=0;if(document.hidden)return;const dt=Math.min((now-last)/1000,.033);last=now;step(reduced.matches ? dt*.25 : dt);render();frame=requestAnimationFrame(tick);}
+function start(){if(!frame&&!document.hidden){last=performance.now();frame=requestAnimationFrame(tick);}}
 function wind(px,py,dx,dy){
  document.body.classList.add('touched');const gx=px/width*W,gy=py/height*H,r=Math.max(5,W*.09);
  for(let y=Math.max(1,Math.floor(gy-r*2));y<Math.min(H-1,gy+r*2);y++)for(let x=Math.max(1,Math.floor(gx-r*2));x<Math.min(W-1,gx+r*2);x++){
   const a=Math.exp(-((x-gx)**2+(y-gy)**2)/(r*r));const i=y*W+x;
   u[i]+=Math.max(-25,Math.min(25,dx/width*W*2))*a;v[i]+=Math.max(-25,Math.min(25,dy/height*H*2))*a;
  }
- if(paused){step(.025);render();}
+
 }
 canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});wind(e.clientX,e.clientY,35,-20);});
 canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse'&&!pointers.has(e.pointerId))return;const prev=pointers.get(e.pointerId);if(prev)wind(e.clientX,e.clientY,e.clientX-prev.x,e.clientY-prev.y);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});});
 for(const type of ['pointerup','pointercancel','pointerleave','lostpointercapture'])canvas.addEventListener(type,e=>pointers.delete(e.pointerId));
 canvas.addEventListener('keydown',e=>{const deltas={ArrowLeft:[-70,0],ArrowRight:[70,0],ArrowUp:[0,-70],ArrowDown:[0,70],Enter:[60,-30],' ':[60,-30]};if(deltas[e.key]){e.preventDefault();wind(width*.5,height*.65,...deltas[e.key]);}});
-function label(){pause.textContent=paused?'再生':'一時停止';pause.setAttribute('aria-pressed',String(paused));}
-pause.addEventListener('click',()=>{paused=!paused;label();if(paused){cancelAnimationFrame(frame);frame=0;}else start();});
 document.addEventListener('visibilitychange',()=>{cancelAnimationFrame(frame);frame=0;pointers.clear();start();});
-addEventListener('resize',resize);resize();label();start();
+addEventListener('resize',resize);resize();start();
 })();
