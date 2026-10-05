@@ -5,6 +5,7 @@ const canvas=document.querySelector('#grass'),ctx=canvas.getContext('2d');
 if(!ctx)return;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let w,h,blades=[],background,last=0,frame=0,time=0;
+const undergrowth=document.createElement('canvas'),ground=undergrowth.getContext('2d');
 const pointers=new Map();
 let seed=41;
 function random(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}
@@ -12,17 +13,25 @@ function resize(){
  w=canvas.clientWidth;h=canvas.clientHeight;
  const scale=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(w*scale);canvas.height=Math.round(h*scale);ctx.setTransform(scale,0,0,scale,0,0);
  background=ctx.createLinearGradient(0,0,w,h);background.addColorStop(0,'#617849');background.addColorStop(.45,'#284c35');background.addColorStop(1,'#112b24');
+ // Cache a dense, still undergrowth once per resize, at CSS-pixel resolution.
+ undergrowth.width=Math.ceil(w);undergrowth.height=Math.ceil(h);
+ ground.fillStyle=background;ground.fillRect(0,0,w,h);seed=173;
+ for(let y=0;y<h+100;y+=8)for(let x=-30;x<w+30;x+=5){
+  const bx=x+random()*12,by=y+random()*12,len=30+random()*65,tip=bx+(random()-.5)*35,half=2+random()*2;
+  ground.beginPath();ground.moveTo(bx-half,by);ground.quadraticCurveTo(bx-half,by-len*.55,tip,by-len);ground.quadraticCurveTo(bx+half,by-len*.45,bx+half,by);ground.closePath();
+  ground.fillStyle=`hsl(${85+random()*30} 30% ${17+random()*18}%)`;ground.fill();
+ }
  seed=41;blades=[];
  const count=Math.min(4200,Math.max(1500,Math.round(w*h/220)));
  for(let i=0;i<count;i++){
   const y=random()*(h+170),depth=.35+.65*Math.min(1,y/h),x=random()*(w+100)-50;
   const light=random(),hue=78+random()*40;
-  blades.push({x,y,len:(55+random()*95)*depth,width:(2+random()*4)*depth,lean:(random()-.5)*36,phase:random()*6.28,shade:`hsl(${hue} ${25+light*17}% ${20+light*27}%)`,edge:`hsla(${hue-8} 44% ${48+light*20}% / .45)`,bend:0,velocity:0});
+  blades.push({x,y,len:(68+random()*114)*depth,width:(2.6+random()*5.2)*depth,lean:(random()-.5)*36,phase:random()*6.28,shade:`hsl(${hue} ${25+light*17}% ${20+light*27}%)`,edge:`hsla(${hue-8} 44% ${48+light*20}% / .45)`,bend:0,velocity:0});
  }
  blades.sort((a,b)=>a.y-b.y);pointers.clear();draw(0);
 }
 function draw(dt){
- ctx.fillStyle=background;ctx.fillRect(0,0,w,h);
+ ctx.drawImage(undergrowth,0,0,w,h);
  for(const b of blades){
   b.velocity+=(-b.bend*28-b.velocity*7)*dt;b.bend+=b.velocity*dt;
   const breeze=reduced.matches?0:(Math.sin(time*.8+b.x*.006+b.y*.004)+.45*Math.sin(time*1.3+b.phase))*b.len*.15;
