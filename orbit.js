@@ -19,12 +19,12 @@ function render(dt){
  for(const [id,p] of wells){if(!p.held)p.life-=dt;if(p.life<=0)wells.delete(id);}
  for(const s of stars){
   let ax=0,ay=0;for(const p of wells.values()){
-   const dx=p.x-s.x,dy=p.y-s.y,d=Math.hypot(dx,dy)/motionScale,soft=Math.sqrt(d*d+2500)*motionScale,power=(p.held?1:Math.min(1,p.life/1.5))*(p.strong?1:.4),force=Math.min(180,250000/(d*d+6000))*power;
-   ax+=(dx/soft-dy/soft*.38)*force*motionScale;ay+=(dy/soft+dx/soft*.38)*force*motionScale;
+   const dx=p.x-s.x,dy=p.y-s.y,d=Math.hypot(dx,dy)/motionScale,soft=Math.sqrt(d*d+2500)*motionScale,power=(p.held?1:Math.min(1,p.life/1.5))*(p.strong?1:.65),force=Math.min(320,1800000/(d*d+9000))*power;
+   ax+=(dx/soft-dy/soft*.18)*force*motionScale;ay+=(dy/soft+dx/soft*.18)*force*motionScale;
   }
   const ox=s.x,oy=s.y;
   s.vx=(s.vx+ax*dt*gentle)*Math.exp(-dt*.045);s.vy=(s.vy+ay*dt*gentle)*Math.exp(-dt*.045);
-  const speed=Math.hypot(s.vx,s.vy);if(speed>170*motionScale){s.vx*=170*motionScale/speed;s.vy*=170*motionScale/speed;}
+  const speed=Math.hypot(s.vx,s.vy);if(speed>260*motionScale){s.vx*=260*motionScale/speed;s.vy*=260*motionScale/speed;}
   s.x+=s.vx*dt*gentle;s.y+=s.vy*dt*gentle;
   if(s.x< -12)s.x=w+12;if(s.x>w+12)s.x=-12;if(s.y< -12)s.y=h+12;if(s.y>h+12)s.y=-12;
   const color=s.warm?'246,214,167':'196,215,250',alpha=.55+.25*(reduced.matches?0:Math.sin(time*.7+s.phase));
@@ -45,4 +45,5 @@ canvas.addEventListener('keydown',e=>{const delta={ArrowLeft:[-25,0],ArrowRight:
 canvas.addEventListener('keyup',()=>{const p=wells.get('key');if(p)p.held=false;});canvas.addEventListener('blur',()=>{for(const p of wells.values())p.held=false;});
 document.addEventListener('visibilitychange',()=>{cancelAnimationFrame(frame);frame=0;wells.clear();start();});addEventListener('resize',resize);resize();start();
 })();
+
 
